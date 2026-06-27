@@ -25,7 +25,9 @@ def download_file(url, local_filename):
         print(f'[SadTalker]: Downloading {url}')
         if os.path.exists(local_filename):
             return local_filename, None
-        os.makedirs(os.path.dirname(local_filename), exist_ok=True)
+        dirname = os.path.dirname(local_filename)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
 
