@@ -18,7 +18,7 @@ WORKDIR /app/SadTalker
 COPY app/ /app/SadTalker
 
 # Install PyTorch with CUDA support and other dependencies
-RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu113 && \
+RUN pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu118 && \
     pip install -r requirements.txt
 
 # Pre-download model checkpoints into the image so the worker never needs to
