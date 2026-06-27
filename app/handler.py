@@ -138,7 +138,8 @@ def generate_video(args):
         return uploaded_url, None
 
     except Exception as e:
-        return None, e
+        import traceback
+        return None, traceback.format_exc()
 
 ''' Handler function that will be used to process jobs. '''
 def handler(job):
@@ -201,7 +202,7 @@ def handler(job):
 
     if error:
         print(f'[SadTalker][ERROR]: generate_video failed: {error}')
-        sys.exit(1)
+        return {'error': str(error)}
     else:
         return {'output_video_url': result}
 
