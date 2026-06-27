@@ -143,6 +143,7 @@ def generate_video(args):
 
 ''' Handler function that will be used to process jobs. '''
 def handler(job):
+    print('[SadTalker]: BUILD_MARKER v2-fix-makedirs-20260628', flush=True)
     job_input = job['input']
 
     # Defaults
