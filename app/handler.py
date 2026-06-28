@@ -172,27 +172,31 @@ def handler(job):
         print(f'[SadTalker][ERROR]: "input_audio_url" is required in job input.')
         sys.exit(1)
 
-    # Download URls and store them in ephemeral storage
-    job_input['source_image'], error = download_file(input_image_url, 'input_image.png')
+    # Download URLs and store them in ephemeral storage. download_file() skips
+    # the download entirely if the local path already exists, so a fixed filename
+    # would silently reuse a PREVIOUS job's image/audio when this worker is warm
+    # and reused across jobs. Namespace every file under this job's id instead.
+    job_id = job.get('id', 'job')
+    job_input['source_image'], error = download_file(input_image_url, f'{job_id}/input_image.png')
 
     if error:
         print(f'[SadTalker][ERROR]: Could not download {input_image_url} exited with error: {error}')
         sys.exit(1)
 
-    job_input['driven_audio'], error = download_file(input_audio_url, 'input_audio.wav')
+    job_input['driven_audio'], error = download_file(input_audio_url, f'{job_id}/input_audio.wav')
 
     if error:
         print(f'[SadTalker][ERROR]: Could not download {input_audio_url} exited with error: {error}')
         sys.exit(1)
 
     if ref_eyeblink_url:
-        job_input['ref_eyeblink'], error = download_file(ref_eyeblink_url, 'eyeroll.mp4')
+        job_input['ref_eyeblink'], error = download_file(ref_eyeblink_url, f'{job_id}/eyeroll.mp4')
 
     if error:
         print(f'[SadTalker][WARNING]: Could not download {ref_eyeblink_url} eye roll reference.  Exited with error: {error}')
 
     if ref_pose_url:
-        job_input['ref_pose'], error = download_file(ref_pose_url, 'ref_pose.mp4')
+        job_input['ref_pose'], error = download_file(ref_pose_url, f'{job_id}/ref_pose.mp4')
 
     if error:
         print(f'[SadTalker][WARNING]: Could not download {ref_pose_url} pose reference.  Exited with error: {error}')
