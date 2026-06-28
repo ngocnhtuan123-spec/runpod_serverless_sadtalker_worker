@@ -143,7 +143,14 @@ def generate_video(args):
 
 ''' Handler function that will be used to process jobs. '''
 def handler(job):
-    print('[SadTalker]: BUILD_MARKER v2-fix-makedirs-20260628', flush=True)
+    print('[SadTalker]: BUILD_MARKER v3-cuda-diag-20260628', flush=True)
+    try:
+        print(f'[SadTalker][diag]: torch={torch.__version__} cuda_build={torch.version.cuda} cuda_available={torch.cuda.is_available()}', flush=True)
+        if torch.cuda.is_available():
+            print(f'[SadTalker][diag]: device_name={torch.cuda.get_device_name(0)} capability={torch.cuda.get_device_capability(0)}', flush=True)
+            print(f'[SadTalker][diag]: arch_list={torch.cuda.get_arch_list()}', flush=True)
+    except Exception as diag_e:
+        print(f'[SadTalker][diag][ERROR]: {diag_e}', flush=True)
     job_input = job['input']
 
     # Defaults
