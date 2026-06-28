@@ -1,5 +1,5 @@
-# Use the official Python 3.8 image from the Docker Hub
-FROM python:3.8-slim
+# Use the official Python 3.10 image from the Docker Hub (3.8 dropped by torch cu128 builds needed for Blackwell GPUs)
+FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -18,7 +18,7 @@ WORKDIR /app/SadTalker
 COPY app/ /app/SadTalker
 
 # Install PyTorch with CUDA support and other dependencies
-RUN pip install torch==2.4.1+cu124 torchvision==0.19.1+cu124 torchaudio==2.4.1 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu124 && \
+RUN pip install torch==2.7.1+cu128 torchvision==0.22.1+cu128 torchaudio==2.7.1 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu128 && \
     pip install -r requirements.txt
 
 # basicsr (gfpgan dep) imports torchvision.transforms.functional_tensor, removed in torchvision>=0.17.
