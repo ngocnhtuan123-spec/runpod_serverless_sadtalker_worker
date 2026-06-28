@@ -18,8 +18,12 @@ WORKDIR /app/SadTalker
 COPY app/ /app/SadTalker
 
 # Install PyTorch with CUDA support and other dependencies
-RUN pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 torchaudio==2.0.2 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu118 && \
+RUN pip install torch==2.4.1+cu124 torchvision==0.19.1+cu124 torchaudio==2.4.1 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu124 && \
     pip install -r requirements.txt
+
+# basicsr (gfpgan dep) imports torchvision.transforms.functional_tensor, removed in torchvision>=0.17
+RUN BASICSR_DEGRADATIONS=$(python3 -c "import basicsr, os; print(os.path.join(os.path.dirname(basicsr.__file__), 'data', 'degradations.py'))") && \
+    sed -i 's/from torchvision.transforms.functional_tensor import rgb_to_grayscale/from torchvision.transforms.functional import rgb_to_grayscale/' "$BASICSR_DEGRADATIONS"
 
 # Pre-download model checkpoints into the image so the worker never needs to
 # fetch them at runtime (faster, cheaper cold starts; works without a volume)
