@@ -21,8 +21,9 @@ COPY app/ /app/SadTalker
 RUN pip install torch==2.4.1+cu124 torchvision==0.19.1+cu124 torchaudio==2.4.1 boto3 runpod==1.6.0 --extra-index-url https://download.pytorch.org/whl/cu124 && \
     pip install -r requirements.txt
 
-# basicsr (gfpgan dep) imports torchvision.transforms.functional_tensor, removed in torchvision>=0.17
-RUN BASICSR_DEGRADATIONS=$(python3 -c "import basicsr, os; print(os.path.join(os.path.dirname(basicsr.__file__), 'data', 'degradations.py'))") && \
+# basicsr (gfpgan dep) imports torchvision.transforms.functional_tensor, removed in torchvision>=0.17.
+# Can't `import basicsr` to locate the file -- that import itself triggers the broken import. Find it on disk instead.
+RUN BASICSR_DEGRADATIONS=$(find / -path "*/basicsr/data/degradations.py" -print -quit) && \
     sed -i 's/from torchvision.transforms.functional_tensor import rgb_to_grayscale/from torchvision.transforms.functional import rgb_to_grayscale/' "$BASICSR_DEGRADATIONS"
 
 # Pre-download model checkpoints into the image so the worker never needs to
